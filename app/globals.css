@@ -1,109 +1,226 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --paper: #f5f4fa;
+  --paper-2: #ebe9f4;
+  --ink: #14121f;
+  --muted: #6b6882;
+  --line: #dcd9e8;
+  --accent: #5b34e6;
+  --accent-ink: #ffffff;
+  --ok: #2f8a57;
+  --brand-1: #1a6dff;
+  --brand-2: #7446ff;
+  --brand-3: #c722ff;
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --paper: #0d0c14;
+  --paper-2: #16141f;
+  --ink: #ecebf4;
+  --muted: #8f8ba6;
+  --line: #262335;
+  --accent: #9d7dff;
+  --accent-ink: #0d0c14;
+  --ok: #5fcf8e;
+  --brand-1: #3d82ff;
+  --brand-2: #8a5fff;
+  --brand-3: #d045ff;
+  color-scheme: dark;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-paper: var(--paper);
+  --color-paper-2: var(--paper-2);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-ok: var(--ok);
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-serif: var(--font-instrument), ui-serif, Georgia, serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-/* Custom Animations for Hero Component */
-@keyframes float-slow {
-  0%, 100% { transform: translateY(0px) translateX(0px); }
-  33% { transform: translateY(-20px) translateX(10px); }
-  66% { transform: translateY(10px) translateX(-10px); }
+::selection {
+  background: var(--accent);
+  color: var(--accent-ink);
 }
 
-@keyframes float-medium {
-  0%, 100% { transform: translateY(0px) translateX(0px); }
-  50% { transform: translateY(-15px) translateX(-15px); }
+/* faint paper grain, kept below content */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.35;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-@keyframes float-fast {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-25px); }
+.bg-brand {
+  background-image: linear-gradient(90deg, var(--brand-1), var(--brand-2) 50%, var(--brand-3));
+}
+.bg-brand-y {
+  background-image: linear-gradient(180deg, var(--brand-1), var(--brand-2) 50%, var(--brand-3));
+}
+.text-brand {
+  background-image: linear-gradient(100deg, var(--brand-1), var(--brand-2) 45%, var(--brand-3));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding-right: 0.08em;
 }
 
-@keyframes spin-slow {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+.link-u {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.25s ease;
+}
+.link-u:hover {
+  background-size: 100% 1px;
 }
 
-@keyframes bounce-slow {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.rise {
+  animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
 
-@keyframes fade-in {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+.caret::after {
+  content: "▍";
+  margin-left: 1px;
+  color: var(--accent);
+  animation: blink 1s steps(1) infinite;
 }
 
-@keyframes slide-in-left {
-  from { opacity: 0; transform: translateX(-30px); }
-  to { opacity: 1; transform: translateX(0); }
+/* scroll reveals: hidden only once JS has flagged the page, so no-JS still shows content */
+[data-js] [data-reveal] {
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  transition:
+    opacity 0.9s var(--ease) var(--d, 0ms),
+    transform 1s var(--ease) var(--d, 0ms),
+    clip-path 1.2s var(--ease) var(--d, 0ms);
+}
+[data-js] [data-reveal="up"]:not(.is-in) {
+  opacity: 0;
+  transform: translateY(28px);
+}
+[data-js] [data-reveal="fade"]:not(.is-in) {
+  opacity: 0;
+}
+[data-js] [data-reveal="line"] {
+  transform-origin: left;
+}
+[data-js] [data-reveal="line"]:not(.is-in) {
+  transform: scaleX(0);
+}
+[data-js] [data-reveal="mask"] > * {
+  transition: transform 1.1s cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0ms);
+}
+[data-js] [data-reveal="mask"]:not(.is-in) > * {
+  transform: translateY(105%);
+}
+[data-js] [data-reveal="clip"]:not(.is-in) {
+  clip-path: inset(100% 0 0 0);
+}
+[data-js] [data-reveal="clip"].is-in {
+  clip-path: inset(0 0 0 0);
 }
 
-@keyframes slide-in-up {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
+.timeline-fill {
+  transform-origin: top;
 }
 
-@keyframes slide-in-right {
-  from { opacity: 0; transform: translateX(30px); }
-  to { opacity: 1; transform: translateX(0); }
+@supports (animation-timeline: view()) {
+  .hero-drift {
+    animation: hero-drift linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 85vh;
+  }
+  .timeline-fill {
+    animation: fill-y linear both;
+    animation-timeline: view();
+    animation-range: cover 15% cover 75%;
+  }
+  .parallax {
+    animation: parallax linear both;
+    animation-timeline: view();
+  }
 }
 
-.animate-float-slow {
-  animation: float-slow 6s ease-in-out infinite;
+@keyframes hero-drift {
+  to {
+    opacity: 0.2;
+    transform: translateY(-70px);
+    filter: blur(2px);
+  }
+}
+@keyframes fill-y {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+@keyframes parallax {
+  from {
+    transform: translateY(-7%) scale(1.14);
+  }
+  to {
+    transform: translateY(7%) scale(1.14);
+  }
 }
 
-.animate-float-medium {
-  animation: float-medium 4s ease-in-out infinite;
-}
-
-.animate-float-fast {
-  animation: float-fast 3s ease-in-out infinite;
-}
-
-.animate-spin-slow {
-  animation: spin-slow 20s linear infinite;
-}
-
-.animate-bounce-slow {
-  animation: bounce-slow 2s ease-in-out infinite;
-}
-
-.animate-fade-in {
-  animation: fade-in 1s ease-out;
-}
-
-.animate-slide-in-left {
-  animation: slide-in-left 0.8s ease-out 0.2s both;
-}
-
-.animate-slide-in-up {
-  animation: slide-in-up 0.8s ease-out 0.4s both;
-}
-
-.animate-slide-in-right {
-  animation: slide-in-right 0.8s ease-out 0.6s both;
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .rise,
+  .caret::after,
+  .hero-drift,
+  .timeline-fill,
+  .parallax {
+    animation: none;
+  }
+  [data-js] [data-reveal],
+  [data-js] [data-reveal] > * {
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+    transition: none !important;
+  }
 }

@@ -1,38 +1,36 @@
-# My-Portfolio
+# tarun pal - portfolio
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
-
-## Getting Started
-
-First, run the development server:
+Single-page portfolio built with Next.js 16, React 19 and Tailwind 4.
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Editing content
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Everything on the page - roles, projects, skills, education - lives in `lib/profile.ts`.
+The AI assistant and the role fit check read from the same file, so update it once and
+both stay in sync.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Résumé download: `public/Tarun_Pal_Resume.pdf`. Portrait: `public/tarun.jpg`.
 
-## Learn More
+## AI features
 
-To learn more about Next.js, take a look at the following resources:
+- **Ask about me** - chat panel (`/api/chat`), streams answers grounded in `lib/profile.ts`.
+- **Role fit check** - paste a JD, get matches, gaps and a score (`/api/fit`).
+- **⌘K / Ctrl K** - command menu; typing a question there sends it to the assistant.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Copy `.env.example` to `.env.local` and set `ANTHROPIC_API_KEY` or `OPENAI_API_KEY` to use a
+real model. Without a key both features still work: the chat uses built-in answers
+(`lib/local-answers.ts`) and the fit check uses keyword matching (`lib/fit.ts`).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Contact form
 
-## Deploy on Vercel
+Set `RESEND_API_KEY` to deliver messages by email. Without it, the form opens the
+visitor's mail app with the message pre-filled.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Deploying
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Works on Vercel as-is. Set `NEXT_PUBLIC_SITE_URL` to your domain and add the API keys
+as environment variables.
